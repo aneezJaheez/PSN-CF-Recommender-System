@@ -24,4 +24,4 @@ Project pipeline : https://www.notion.so/9489b0a8de78403ba1983ecd648432bc?v=09e7
 •	Wes McKinney. Python for Data Analysis. O’Reilly Media, Inc, October 2017
 
 
-THIS FILE WILL BE UPDATED AFTER THE FINAL MODEL HAS BEEN UPLOADED
+NOTE : This file will be updated after the keras model has been added to the repository
