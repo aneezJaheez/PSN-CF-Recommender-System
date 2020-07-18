@@ -19,19 +19,34 @@ import numpy as np
 #Model function definition for hyperas parameter tuning
 
 def model(X_train, y_train, X_valid, y_valid):
-    
+    """
+    Model Function to define the network architecture and hyperparameters.
+    This function will be passed to the hyperas optim function for hyperparameter optimization.
+
+    Arguments : 
+    -> Trainset inputs (X_train)
+    -> Trainset Outputs (y_train)
+    -> Validation Inputs (X_valid)
+    -> Validation Outputs (y_valid)
+
+    Returns:
+    -> Error metric (Loss in this case)
+    -> Status
+    -> Keras Model
+
+    """
+
     #Choosing the number of embeddings for the users and items. 
     num_embed_user = {{choice([30, 40, 50, 60])}}
     num_embed_game = {{choice([20, 30, 40, 50])}}
     
-    #Choosing optimal values for ridge regularization in the embeddings layer
+    #Optimal value from range for ridge regularization in the embeddings layer
     l2_param = {{uniform(0, 1e-3)}}
-    
     
     #Selecting the optimization to be tested
     optval = {{choice(["sgd", "adam"])}}
     
-    #Choosing the learning rates and deining the optimization function
+    #Choosing the learning rates and deining the optimization function based on optval value
     if(optval == "sgd"):
         sgd_lr_param = {{uniform(0, 0.1)}}
         optim = keras.optimizers.SGD(lr = sgd_lr_param, momentum = {{uniform(0, 1)}})
@@ -42,9 +57,11 @@ def model(X_train, y_train, X_valid, y_valid):
     #Number of neurons per hidden layer. I will be using the same number of neurons in every hidden layer
     num_neurons = {{choice([4, 8, 16, 32, 64, 128])}}
     
-    #Number of unique users and unique games to for embedding layer specs
+    #Number of unique users and unique games used for embedding layer specs
     num_users = len(X_train["User_Enc"].unique())
     num_games = len(X_train["Game_Enc"].unique())
+
+
     
     #DL ARCHITECUTURE DEFINITION
     #===========================================================================================================
@@ -76,33 +93,33 @@ def model(X_train, y_train, X_valid, y_valid):
     #Flattening the output from the embeddings layer before feeding it into the dense layer
     game_embed_flat = layers.Flatten(name = "Flat_Game_Embeddings")(game_embed)
     
-    #Now the embeddings mimic a set of features that can be used as inputs into the DL model
-    
-    #Concatenating the user and game embeddings. The output from this layer will be the input into the hidden layers
+    #Now the embeddings mimic a set of features that can be used as inputs into the DL model after concatenation.
     concat = layers.Concatenate(name = "User_Game_Embeddings")([game_embed_flat, user_embed_flat])
     
     
     #Hidden layer definitions
     
-    #All hidden layers will be using the same activation function that is recommended for regression-
+    #All hidden layers will be using the same activation function(relu) that is recommended for regression-
     #since collaborative filtering is essentially a multiple regression problem over multiple users and games
     
     #Hidden layer 1
     dense1 = layers.Dense(num_neurons, activation = "relu", name = "Hidden_Layer_1")(concat)
     #Batch normalization for hidden layer 1 to help the model converge faster
     dense1 = layers.BatchNormalization(name='batch_norm1')(dense1)
-    
     #Dropout layer to prevent overfitting. The dropout layer sets random paramters to 0 at the specified frequency
     dense1 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_1")(dense1))
     
+    #For most cases, 1 hidden layer with sufficient number of neurons should be able to fit the data well. 
+    #Option to add extra hidden layers
     num_extra_layers = {{choice([0, 1])}}
     
     if(num_extra_layers == 1):
+        #Defining second hidden layer with normalization and dropout
         dense2 = layers.Dense(num_neurons, activation = "relu", name = "Hidden_Layer_2")(dense1)
         dense2 = layers.BatchNormalization(name = "batch_norm2")(dense2)
         dense2 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_1")(dense2))
         
-        #Output layer
+        #Output layer with a single neuron for 1 output per user-item pair
         output = layers.Dense(1, activation = "relu", name = "Output_Layer")(dense2)
     else:
         #Output layer
@@ -141,6 +158,7 @@ def model(X_train, y_train, X_valid, y_valid):
     )
     
     #Evaluating the model on the validation set using the optimal hyperparameters and saving the mse(loss)
+    #The test set is not used in this case because the model has to be unbiased towards the test set when presenting the error
     loss, acc = model.evaluate([X_valid.Game_Enc, X_valid.User_Enc], y_valid.Rating)
     
     return {'loss': loss, 'status': STATUS_OK, 'model': model}
@@ -149,10 +167,23 @@ def model(X_train, y_train, X_valid, y_valid):
 
 #data retrieval and processing function for hyperas parameter tuning
 def data():
-    """Note that the data has to be retrieved within this function even if it has retrieved 
-       already at some other point in the script."""
+    """
+    Note that the data has to be retrieved within this function even if it has retrieved 
+    already at some other point in the script.
+
+    Data loading function for hyperas parameter tuning. Provides the data that is passed into the model function.
+
+    Arguments: None
+
+    Returns:
+    -> Trainset inputs (X_train)
+    -> Trainset Outputs (y_train)
+    -> Validation Inputs (X_valid)
+    -> Validation Outputs (y_valid)
+
+    """
     
-    #Importing the train and validation sets
+    #Importing the train and validation sets from file on device
     trainset = pd.read_csv("trainset.csv")
     validset = pd.read_csv("validset.csv")   
 
@@ -162,20 +193,21 @@ def data():
     X_valid = validset[["User_Enc", "Game_Enc"]]
     y_valid = validset[["Rating"]]
     
-    return X_train, y_train, X_valid, y_valid  
+    return X_train, y_train, X_valid, y_valid
 
 
 #Execution starts here
 if __name__ == '__main__':
 
-	#Model optimization using the above defined functions
+	#Hyperas Model optimization using the above defined functions
+    #Returns the optimal parameter values (best_run) and the best model(best_model) from the defined search space
     best_run, best_model = optim.minimize(
     	model=model,
         data=data,
-        algo=tpe.suggest,
+        algo=tpe.suggest, #Search algorithm for traversing the search space
         max_evals=20,
         trials=Trials(),
-        eval_space = True
+        eval_space = True #Shows tha actual values chosen rather than the index of values chosen during tuning
     )
 
     print("Best performing model chosen hyper-parameters:")
