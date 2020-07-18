@@ -101,7 +101,7 @@ def model(X_train, y_train, X_valid, y_valid):
     #Dropout layer to prevent overfitting. The dropout layer sets random paramters to 0 at the specified frequency
     dense1 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_1")(dense1))
     
-    num_extra_layers = {{choice([0, 1, 2])}}
+    num_extra_layers = {{choice([0, 1])}}
     
     if(num_extra_layers == 1):
         dense2 = layers.Dense(num_neurons, activation = "relu", name = "Hidden_Layer_2")(dense1)
