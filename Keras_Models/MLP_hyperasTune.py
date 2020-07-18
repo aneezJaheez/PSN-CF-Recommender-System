@@ -27,23 +27,17 @@ def model(X_train, y_train, X_valid, y_valid):
     #Choosing optimal values for ridge regularization in the embeddings layer
     l2_param = {{uniform(0, 1e-3)}}
     
-    #Choosing the learning rates for each optimizer
-    adam_lr_param = {{uniform(1e-7, 1e-3)}}
-    sgd_lr_param = {{uniform(0, 0.1)}}
-    
-    #Defining the optimizers to choose from
-    #In this case I will be choosing between SGD, Adam, and RMSprop
-    sgd = keras.optimizers.SGD(lr = sgd_lr_param, momentum = {{uniform(0, 1)}}) 
-    adam = keras.optimizers.Adam(lr = adam_lr_param)
     
     #Selecting the optimization to be tested
     optval = {{choice(["sgd", "adam"])}}
     
-    #Setting the optimization function
+    #Choosing the learning rates and deining the optimization function
     if(optval == "sgd"):
-        optim = sgd
-    elif(optval == "adam"):
-        optim = adam
+        sgd_lr_param = {{uniform(0, 0.1)}}
+        optim = keras.optimizers.SGD(lr = sgd_lr_param, momentum = {{uniform(0, 1)}})
+    else:
+        adam_lr_param = {{uniform(1e-7, 1e-3)}}
+        optim = keras.optimizers.Adam(lr = adam_lr_param)
     
     #Number of neurons per hidden layer. I will be using the same number of neurons in every hidden layer
     num_neurons = {{choice([4, 8, 16, 32, 64, 128])}}
@@ -109,7 +103,7 @@ def model(X_train, y_train, X_valid, y_valid):
         dense2 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_1")(dense2))
         
         #Output layer
-        output = layers.Dense(1, activation = "relu", name = "Output_Layer")(dense1)
+        output = layers.Dense(1, activation = "relu", name = "Output_Layer")(dense2)
     else:
         #Output layer
         output = layers.Dense(1, activation = "relu", name = "Output_Layer")(dense1)
@@ -127,7 +121,7 @@ def model(X_train, y_train, X_valid, y_valid):
     #Early stopping callback which will stop the learning process when there is insignificant improvement between each iteration.
     early_stopping_cb = keras.callbacks.EarlyStopping(
         monitor = "val_loss", #Monitors the validation set error
-        min_delta = 0.001, #Minimum value to be considered as a significant improvement
+        min_delta = 0.002, #Minimum value to be considered as a significant improvement
         patience = 1, #Number of iterations to continue running with insignificant improvement
         restore_best_weights = True, #Use parameters from the best iteration in the model 
     )
@@ -140,7 +134,7 @@ def model(X_train, y_train, X_valid, y_valid):
         x = [X_train.Game_Enc, X_train.User_Enc], 
         y=y_train.Rating, 
         batch_size = 128, 
-        epochs=100, #Can set this to a high number because early stopping is enabled 
+        epochs=100, #A high value can be used sicne early stopping is enabled
         verbose=1, 
         validation_data=([X_valid.Game_Enc, X_valid.User_Enc], y_valid.Rating), 
         callbacks = early_stopping_cb
@@ -179,7 +173,7 @@ if __name__ == '__main__':
     	model=model,
         data=data,
         algo=tpe.suggest,
-        max_evals=10,
+        max_evals=20,
         trials=Trials(),
         eval_space = True
     )
@@ -192,9 +186,3 @@ if __name__ == '__main__':
 
 
 #End of hyperparameter tuning process
-
-
-
-
-
-
