@@ -117,7 +117,7 @@ def model(X_train, y_train, X_valid, y_valid):
         #Defining second hidden layer with normalization and dropout
         dense2 = layers.Dense(num_neurons, activation = "relu", name = "Hidden_Layer_2")(dense1)
         dense2 = layers.BatchNormalization(name = "batch_norm2")(dense2)
-        dense2 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_1")(dense2))
+        dense2 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_2")(dense2))
         
         #Output layer with a single neuron for 1 output per user-item pair
         output = layers.Dense(1, activation = "relu", name = "Output_Layer")(dense2)
