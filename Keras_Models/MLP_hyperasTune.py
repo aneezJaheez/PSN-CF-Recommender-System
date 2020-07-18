@@ -37,7 +37,7 @@ def model(X_train, y_train, X_valid, y_valid):
     adam = keras.optimizers.Adam(lr = adam_lr_param)
     
     #Selecting the optimization to be tested
-    optval = {{choice(["sgd", "adam", "rms"])}}
+    optval = {{choice(["sgd", "adam"])}}
     
     #Setting the optimization function
     if(optval == "sgd"):
