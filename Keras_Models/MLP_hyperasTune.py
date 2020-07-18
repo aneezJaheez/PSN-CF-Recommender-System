@@ -140,7 +140,7 @@ def model(X_train, y_train, X_valid, y_valid):
         x = [X_train.Game_Enc, X_train.User_Enc], 
         y=y_train.Rating, 
         batch_size = 128, 
-        epochs=10, 
+        epochs=100, #Can set this to a high number because early stopping is enabled 
         verbose=1, 
         validation_data=([X_valid.Game_Enc, X_valid.User_Enc], y_valid.Rating), 
         callbacks = early_stopping_cb
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     	model=model,
         data=data,
         algo=tpe.suggest,
-        max_evals=2,
+        max_evals=10,
         trials=Trials(),
         eval_space = True
     )
