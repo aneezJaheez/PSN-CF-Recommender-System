@@ -1,4 +1,4 @@
-#Python script to build a deep learning keras model for collaborative filtering and tune the hyperparameters for best results using hyperas
+#Python script to build a neural matrix factorization based keras model for collaborative filtering and tune the hyperparameters for best results using hyperas
 
 #Keras Libraries
 import tensorflow as tf
@@ -19,19 +19,36 @@ import numpy as np
 #Model function definition for hyperas parameter tuning
 
 def model(X_train, y_train, X_valid, y_valid):
+    """
+    Model Function to define the network architecture and hyperparameters.
+    This function will be passed to the hyperas optim function for hyperparameter optimization.
+
+    Arguments : 
+    -> Trainset inputs (X_train)
+    -> Trainset Outputs (y_train)
+    -> Validation Inputs (X_valid)
+    -> Validation Outputs (y_valid)
+
+    Returns:
+    -> Error metric (Loss in this case)
+    -> Status
+    -> Keras Model
+
+    """
     
-    #Choosing the number of embeddings for the users and items. 
+    #Choosing the number of embeddings for the users and items for the MLP section of the model. 
     num_embed_user = {{choice([30, 40, 50, 60])}}
     num_embed_game = {{choice([20, 30, 40, 50])}}
 
-    #User and game embedding length should be same for matrix factorization
+    #Choosing number of embeddings for MF section of the model
+    #Note that for this section, users and items have to have the same number of embeddings in order to find the dot product between them
     num_embed_mf = {{choice([10, 20, 30, 40, 50])}}
     
-    #Choosing optimal values for ridge regularization in the embeddings layer
+    #Choosing optimal values for ridge regularization in the embeddings layer for MLP and MF
     mlp_l2_param = {{uniform(0, 1e-3)}}
     mf_l2_param = {{uniform(0, 1e-4)}}
 
-    #Selecting the optimization to be tested
+    #Selecting the optimization to be tested. The whole model will use the same optimization algorithm
     optval = {{choice(["sgd", "adam"])}}
     
     #Choosing the learning rates and defining optimization function using the above choice
@@ -54,7 +71,10 @@ def model(X_train, y_train, X_valid, y_valid):
     
     #1st Input for the network which takes in the unique integer encodings given to the user
     user_input = layers.Input(shape = (1, ), name = "User_Name_Input")
-    #Embedding layer to create embedding vectors for each user with the chosen length
+
+    #Note that the MLP and MF sections of the model will have their own parameters and won't be sharing common parameters.
+
+    #MLP Embedding layer to create embedding vectors for each user with the chosen length
     mlp_user_embed = layers.Embedding(
         num_users, 
         num_embed_user, 
@@ -63,6 +83,7 @@ def model(X_train, y_train, X_valid, y_valid):
         name = "User_Embeddings_MLP"
     )(user_input)
 
+    #User embeddding layer for matrix factorization with the chosen length
     mf_user_embed = layers.Embedding(
         num_users, 
         num_embed_mf, 
@@ -70,14 +91,16 @@ def model(X_train, y_train, X_valid, y_valid):
         embeddings_regularizer=keras.regularizers.l2(mf_l2_param), 
         name = "User_Embeddings_MF"
     )(user_input)
-    #Flattening the embedding layer so that it can be fed into a dense layer.
+
+    #Flattening the embedding layer for MLP and MF so that it can be fed into a dense layer.
     #Reshaping or flattening the embedding layer is crucial before feeding it into a dense layer.
     mlp_user_embed_flat = layers.Flatten(name = "Flat_User_Embeddings_MLP")(mlp_user_embed)
     mf_user_embed_flat = layers.Flatten(name = "Flat_User_Embeddings_MF")(mf_user_embed)
 
     #2nd Input for the network which takes in the unique integer encodings given to each game 
     game_input = layers.Input(shape = (1, ), name = "Game_Name_Input")
-    #Embedding layer to create embeddings for each game with the specified length
+
+    #MLP Embedding layer to create embeddings for each game with the specified length
     mlp_game_embed = layers.Embedding(
         num_games, 
         num_embed_game, 
@@ -86,6 +109,7 @@ def model(X_train, y_train, X_valid, y_valid):
         name = "Game_Embeddings_MLP"
     )(game_input)
 
+    #MF Embedding layer to create embeddings for each game with the specified length
     mf_game_embed = layers.Embedding(
         num_games, 
         num_embed_mf, 
@@ -93,21 +117,25 @@ def model(X_train, y_train, X_valid, y_valid):
         embeddings_regularizer=keras.regularizers.l2(mf_l2_param),
         name = "Game_Embeddings_MF"
     )(game_input)
+
     #Flattening the output from the embeddings layer before feeding it into the dense layer
     mlp_game_embed_flat = layers.Flatten(name = "Flat_Game_Embeddings_MLP")(mlp_game_embed)
     mf_game_embed_flat = layers.Flatten(name = "Flat_Game_Embeddings_MF")(mf_game_embed)
-    
-    #Now the embeddings mimic a set of features that can be used as inputs into the DL model
 
-    #Matrix factorization layer
+    #Matrix factorization section of the NN model
+    #Dot product between MF user and item embeddings. This is the output from the MF section of the model
     mf_layer = layers.Dot(axes = 1)([mf_game_embed_flat, mf_user_embed_flat])
+    #Restricting the range of output to the range [0, 1] as our ratings are scaled to this range
     mf_output = keras.activations.relu(mf_layer, max_value = 1.0, threshold = 0.0)
     
-    #Concatenating the user and game embeddings. The output from this layer will be the input into the hidden layers for mlp
+
+
+    #MLP section of the model
+    #Now the embeddings mimic a set of features that can be used as inputs into the DL model after concatenation
     mlp_concat = layers.Concatenate(name = "User_Game_Embeddings")([mlp_game_embed_flat, mlp_user_embed_flat])
     
     
-    #Hidden layer definitions
+    #Hidden layer definitions for MLP 
     
     #All hidden layers will be using the same activation function that is recommended for regression-
     #since collaborative filtering is essentially a multiple regression problem over multiple users and games
@@ -136,9 +164,11 @@ def model(X_train, y_train, X_valid, y_valid):
     #Constraining the outputs to the range [0, 1] since we have normalized our outputs to this range
     mlp_output = keras.activations.relu(mlp_output, max_value = 1.0, threshold = 0.0)
 
-    #Combining the outputs from matrix factorization and mlp
+    #Combining the outputs from matrix factorization and mlp sections of the model
     mlp_mf_concat = layers.Concatenate()([mlp_output, mf_output])
     mlp_mf_output = layers.Dense(1, activation = "relu")(mlp_mf_concat)
+
+    #Final output from the model
     output = keras.activations.relu(mlp_mf_output, max_value = 1.0, threshold = 0.0)
     
     
@@ -179,10 +209,23 @@ def model(X_train, y_train, X_valid, y_valid):
 
 #data retrieval and processing function for hyperas parameter tuning
 def data():
-    """Note that the data has to be retrieved within this function even if it has retrieved 
-       already at some other point in the script."""
+    """
+    Note that the data has to be retrieved within this function even if it has retrieved 
+    already at some other point in the script.
+
+    Data loading function for hyperas parameter tuning. Provides the data that is passed into the model function.
+
+    Arguments: None
+
+    Returns:
+    -> Trainset inputs (X_train)
+    -> Trainset Outputs (y_train)
+    -> Validation Inputs (X_valid)
+    -> Validation Outputs (y_valid)
+
+    """
     
-    #Importing the train and validation sets
+    #Importing the train and validation sets from device
     trainset = pd.read_csv("trainset.csv")
     validset = pd.read_csv("validset.csv")   
 
@@ -198,27 +241,22 @@ def data():
 #Execution starts here
 if __name__ == '__main__':
 
-	#Model optimization using the above defined functions
+	#Hyperas Model optimization using the above defined functions
+    #Returns the optimal parameter values (best_run) and the best model(best_model) from the defined search space
     best_run, best_model = optim.minimize(
     	model=model,
         data=data,
-        algo=tpe.suggest,
+        algo=tpe.suggest, #Search algorithm for traversing the search space
         max_evals=20,
         trials=Trials(),
-        eval_space = True
+        eval_space = True #Shows tha actual values chosen rather than the index of values chosen during tuning
     )
 
     print("Best performing model chosen hyper-parameters:")
     print(best_run)
 
     #Saving the best model so it can be imported in the notebook
-    best_model.save("Keras_Collab_DL_Model.h5")
+    best_model.save("NeuMF_RecSys_Model.h5")
 
 
 #End of hyperparameter tuning process
-
-
-
-
-
-
