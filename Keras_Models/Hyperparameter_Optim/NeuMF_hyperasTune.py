@@ -35,6 +35,16 @@ def model(X_train, y_train, X_valid, y_valid):
     -> Keras Model
 
     """
+
+    #log directory setting
+    root_logdir = os.path.join(os.curdir, "neuMF_run_logs")
+    
+    #Logging function to name and return the folder to be used
+    #The logs will be named with the convention "run_(num_user_embeddings)_(num_game_embeddings)_(num_neurons)_(num_hidden_layers)_(optimization_function)_(learning_rate)"
+    def get_run_logdir(emb_u, emb_g, emb_mf, neurons, layers, opt, lr): 
+        import time
+        run_id = "run_" + str(emb_u) + "_" + str(emb_g) + "_" + str(emb_mf) + "_" + str(neurons) + "_" + str(layers) + "_" + opt + "_" + lr
+        return os.path.join(root_logdir, run_id)
     
     #Choosing the number of embeddings for the users and items for the MLP section of the model. 
     num_embed_user = {{choice([30, 40, 50, 60])}}
@@ -185,6 +195,16 @@ def model(X_train, y_train, X_valid, y_valid):
         patience = 1, #Number of iterations to continue running with insignificant improvement
         restore_best_weights = True, #Use parameters from the best iteration in the model 
     )
+
+    #Learning rate that will be passed to the log directory
+    if(optval == "sgd"):
+        lr = (str(sgd_lr_param))[:5]
+    else:
+        lr = (str(adam_lr_param))[:4] + (str(adam_lr_param))[-4:]
+
+    #Defining callback to log optimization runs
+    run_logdir = get_run_logdir(num_embed_user, num_embed_game, num_embed_mf, num_neurons, num_extra_layers, optval, lr)
+    tensorboard_cb = keras.callbacks.TensorBoard(run_logdir)
     
     #Model compilation
     model.compile(loss='mse', optimizer=optim, metrics = ['accuracy'])
