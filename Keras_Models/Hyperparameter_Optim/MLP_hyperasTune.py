@@ -9,7 +9,7 @@ from keras import callbacks
 #Hyperas Imports
 from hyperas.distributions import uniform
 from hyperas.distributions import choice
-from hyperopt import Trials, STATUS_OK, tpe
+from hyperopt import Trials, STATUS_OK, tpe, rand
 from hyperas import optim
 
 #Other essential libraries
@@ -41,7 +41,7 @@ def model(X_train, y_train, X_valid, y_valid):
     num_embed_game = {{choice([20, 30, 40, 50])}}
     
     #Optimal value from range for ridge regularization in the embeddings layer
-    l2_param = {{uniform(0, 1e-3)}}
+    l2_param = {{uniform(3e-8, 1e-6)}}
     
     #Selecting the optimization to be tested
     optval = {{choice(["sgd", "adam"])}}
@@ -51,7 +51,7 @@ def model(X_train, y_train, X_valid, y_valid):
         sgd_lr_param = {{uniform(0, 0.1)}}
         optim = keras.optimizers.SGD(lr = sgd_lr_param, momentum = {{uniform(0, 1)}})
     else:
-        adam_lr_param = {{uniform(1e-7, 1e-3)}}
+        adam_lr_param = {{uniform(3e-6, 1e-4)}}
         optim = keras.optimizers.Adam(lr = adam_lr_param)
     
     #Number of neurons per hidden layer. I will be using the same number of neurons in every hidden layer
@@ -72,8 +72,8 @@ def model(X_train, y_train, X_valid, y_valid):
     user_embed = layers.Embedding(
         num_users, 
         num_embed_user, 
-        embeddings_initializer='he_normal', 
-        embeddings_regularizer=keras.regularizers.l2(l2_param), 
+        embeddings_initializer = 'he_normal', 
+        embeddings_regularizer = keras.regularizers.l2(l2_param), 
         name = "User_Embeddings"
     )(user_input)
     #Flattening the embedding layer so that it can be fed into a dense layer.
@@ -105,9 +105,10 @@ def model(X_train, y_train, X_valid, y_valid):
     #Hidden layer 1
     dense1 = layers.Dense(num_neurons, activation = "relu", name = "Hidden_Layer_1")(concat)
     #Batch normalization for hidden layer 1 to help the model converge faster
-    dense1 = layers.BatchNormalization(name='batch_norm1')(dense1)
+    #I have not used normalization in this case because time is not a constraint during tuning
+    # dense1 = layers.BatchNormalization(name='batch_norm1')(dense1)
     #Dropout layer to prevent overfitting. The dropout layer sets random paramters to 0 at the specified frequency
-    dense1 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_1")(dense1))
+    dense1 = (layers.Dropout({{uniform(0, 0.4)}}, name = "Dropout_Layer_1")(dense1))
     
     #For most cases, 1 hidden layer with sufficient number of neurons should be able to fit the data well. 
     #Option to add extra hidden layers
@@ -116,8 +117,8 @@ def model(X_train, y_train, X_valid, y_valid):
     if(num_extra_layers == 1):
         #Defining second hidden layer with normalization and dropout
         dense2 = layers.Dense(num_neurons, activation = "relu", name = "Hidden_Layer_2")(dense1)
-        dense2 = layers.BatchNormalization(name = "batch_norm2")(dense2)
-        dense2 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_2")(dense2))
+        # dense2 = layers.BatchNormalization(name = "batch_norm2")(dense2)
+        dense2 = (layers.Dropout({{uniform(0, 0.4)}}, name = "Dropout_Layer_2")(dense2))
         
         #Output layer with a single neuron for 1 output per user-item pair
         output = layers.Dense(1, activation = "relu", name = "Output_Layer")(dense2)
@@ -133,12 +134,12 @@ def model(X_train, y_train, X_valid, y_valid):
     #END OF MODEL ARCHITECTURE
     
     #Initializing the model using the above architecture
-    model = keras.Model(inputs=[game_input, user_input], outputs=result)
+    model = keras.Model(inputs=[game_input, user_input], outputs=output)
 
     #Early stopping callback which will stop the learning process when there is insignificant improvement between each iteration.
     early_stopping_cb = keras.callbacks.EarlyStopping(
         monitor = "val_loss", #Monitors the validation set error
-        min_delta = 0.002, #Minimum value to be considered as a significant improvement
+        min_delta = 15e-4, #Minimum value to be considered as a significant improvement
         patience = 1, #Number of iterations to continue running with insignificant improvement
         restore_best_weights = True, #Use parameters from the best iteration in the model 
     )
@@ -149,11 +150,11 @@ def model(X_train, y_train, X_valid, y_valid):
     #Training and validating the model
     model.fit(
         x = [X_train.Game_Enc, X_train.User_Enc], 
-        y=y_train.Rating, 
+        y = y_train.Rating, 
         batch_size = 128, 
-        epochs=100, #A high value can be used sicne early stopping is enabled
-        verbose=1, 
-        validation_data=([X_valid.Game_Enc, X_valid.User_Enc], y_valid.Rating), 
+        epochs = 100, #A high value can be used sicne early stopping is enabled
+        verbose = 1, 
+        validation_data = ([X_valid.Game_Enc, X_valid.User_Enc], y_valid.Rating), 
         callbacks = early_stopping_cb
     )
     
@@ -202,19 +203,25 @@ if __name__ == '__main__':
 	#Hyperas Model optimization using the above defined functions
     #Returns the optimal parameter values (best_run) and the best model(best_model) from the defined search space
     best_run, best_model = optim.minimize(
-    	model=model,
-        data=data,
-        algo=tpe.suggest, #Search algorithm for traversing the search space
-        max_evals=20,
-        trials=Trials(),
-        eval_space = True #Shows tha actual values chosen rather than the index of values chosen during tuning
+    	model = model,
+        data = data,
+        algo = rand.suggest, #Search algorithm for traversing the search space
+        max_evals = 20,
+        trials = Trials(),
+        eval_space = True #Shows the actual values chosen rather than the index of values chosen during tuning
     )
 
     print("Best performing model chosen hyper-parameters:")
     print(best_run)
 
     #Saving the best model so it can be imported in the notebook
-    best_model.save("Keras_Collab_DL_Model.h5")
+    best_model.save("MLP_RecSys_Model.h5")
 
 
 #End of hyperparameter tuning process
+
+
+
+
+
+
