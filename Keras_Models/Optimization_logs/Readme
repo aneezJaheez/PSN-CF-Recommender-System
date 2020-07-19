@@ -29,4 +29,6 @@
   
   Commands:
   "%load_ext tensorboard"
-  "%tensorboard --logdir=./my_logs --port=6006"
+  "%tensorboard --logdir=./mlp_run_logs --port=6006"
+
+   "mlp_run_logs" is the file containing the logs. If you have stored the log files in a different folder modify this part of the command accordingly.
