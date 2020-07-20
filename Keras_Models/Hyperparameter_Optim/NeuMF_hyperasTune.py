@@ -9,12 +9,15 @@ from keras import callbacks
 #Hyperas Imports
 from hyperas.distributions import uniform
 from hyperas.distributions import choice
-from hyperopt import Trials, STATUS_OK, tpe
+from hyperopt import Trials, STATUS_OK, tpe, rand
 from hyperas import optim
 
 #Other essential libraries
 import pandas as pd
 import numpy as np
+
+#Imports for logging optimization runs
+import os
 
 #Model function definition for hyperas parameter tuning
 
@@ -55,18 +58,18 @@ def model(X_train, y_train, X_valid, y_valid):
     num_embed_mf = {{choice([10, 20, 30, 40, 50])}}
     
     #Choosing optimal values for ridge regularization in the embeddings layer for MLP and MF
-    mlp_l2_param = {{uniform(0, 1e-3)}}
-    mf_l2_param = {{uniform(0, 1e-4)}}
+    mlp_l2_param = {{uniform(3e-8, 1e-6)}}
+    mf_l2_param = {{uniform(2e-8, 1e-6)}}
 
     #Selecting the optimization to be tested. The whole model will use the same optimization algorithm
     optval = {{choice(["sgd", "adam"])}}
     
     #Choosing the learning rates and defining optimization function using the above choice
     if(optval == "sgd"):
-        sgd_lr_param = {{uniform(0, 0.1)}}
+        sgd_lr_param = {{uniform(1e-4, 1e-1)}}
         optim = keras.optimizers.SGD(lr = sgd_lr_param, momentum = {{uniform(0, 1)}})
     else:
-        adam_lr_param = {{uniform(1e-7, 1e-3)}}
+        adam_lr_param = {{uniform(3e-6, 1e-4)}}
         optim = keras.optimizers.Adam(lr = adam_lr_param)
     
     #Number of neurons per hidden layer. I will be using the same number of neurons in every hidden layer
@@ -153,17 +156,17 @@ def model(X_train, y_train, X_valid, y_valid):
     #Hidden layer 1
     mlp_dense1 = layers.Dense(num_neurons, activation = "relu", name = "Hidden_Layer_1")(mlp_concat)
     #Batch normalization for hidden layer 1 to help the model converge faster
-    mlp_dense1 = layers.BatchNormalization(name='batch_norm1')(mlp_dense1)
+    # mlp_dense1 = layers.BatchNormalization(name='batch_norm1')(mlp_dense1)
     
     #Dropout layer to prevent overfitting. The dropout layer sets random paramters to 0 at the specified frequency
-    mlp_dense1 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_1")(mlp_dense1))
+    mlp_dense1 = (layers.Dropout({{uniform(0, 0.4)}}, name = "Dropout_Layer_1")(mlp_dense1))
     
     num_extra_layers = {{choice([0, 1])}}
     
     if(num_extra_layers == 1):
         mlp_dense2 = layers.Dense(num_neurons, activation = "relu", name = "Hidden_Layer_2")(mlp_dense1)
-        mlp_dense2 = layers.BatchNormalization(name = "batch_norm2")(mlp_dense2)
-        mlp_dense2 = (layers.Dropout({{uniform(0, 1)}}, name = "Dropout_Layer_2")(mlp_dense2))
+        # mlp_dense2 = layers.BatchNormalization(name = "batch_norm2")(mlp_dense2)
+        mlp_dense2 = (layers.Dropout({{uniform(0, 0.4)}}, name = "Dropout_Layer_2")(mlp_dense2))
         
         #Output layer
         mlp_output = layers.Dense(8, activation = "relu", name = "Output_Layer")(mlp_dense2)
@@ -191,7 +194,7 @@ def model(X_train, y_train, X_valid, y_valid):
     #Early stopping callback which will stop the learning process when there is insignificant improvement between each iteration.
     early_stopping_cb = keras.callbacks.EarlyStopping(
         monitor = "val_loss", #Monitors the validation set error
-        min_delta = 0.002, #Minimum value to be considered as a significant improvement
+        min_delta = 0.0015, #Minimum value to be considered as a significant improvement
         patience = 1, #Number of iterations to continue running with insignificant improvement
         restore_best_weights = True, #Use parameters from the best iteration in the model 
     )
@@ -207,7 +210,7 @@ def model(X_train, y_train, X_valid, y_valid):
     tensorboard_cb = keras.callbacks.TensorBoard(run_logdir)
     
     #Model compilation
-    model.compile(loss='mse', optimizer=optim, metrics = ['accuracy'])
+    model.compile(loss='mse', optimizer=optim, metrics = ['mae'])
     
     #Training and validating the model
     model.fit(
@@ -217,11 +220,11 @@ def model(X_train, y_train, X_valid, y_valid):
         epochs=100,  #Value can be set high because early stopping is enabled
         verbose=1, 
         validation_data=([X_valid.Game_Enc, X_valid.User_Enc], y_valid.Rating), 
-        callbacks = [early_stopping_cb]
+        callbacks = [early_stopping_cb, tensorboard_cb]
     )
     
     #Evaluating the model on the validation set using the optimal hyperparameters and saving the mse(loss)
-    loss, acc = model.evaluate([X_valid.Game_Enc, X_valid.User_Enc], y_valid.Rating)
+    loss, abs_loss = model.evaluate([X_valid.Game_Enc, X_valid.User_Enc], y_valid.Rating)
     
     return {'loss': loss, 'status': STATUS_OK, 'model': model}
 
@@ -266,7 +269,7 @@ if __name__ == '__main__':
     best_run, best_model = optim.minimize(
     	model=model,
         data=data,
-        algo=tpe.suggest, #Search algorithm for traversing the search space
+        algo=rand.suggest, #Search algorithm for traversing the search space
         max_evals=20,
         trials=Trials(),
         eval_space = True #Shows tha actual values chosen rather than the index of values chosen during tuning
