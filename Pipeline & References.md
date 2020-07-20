@@ -23,5 +23,12 @@ Project pipeline : https://www.notion.so/9489b0a8de78403ba1983ecd648432bc?v=09e7
 
 •	Wes McKinney. Python for Data Analysis. O’Reilly Media, Inc, October 2017
 
+• Aurélien Géron. Hands-on Machine Learning with Scikit-Learn, Keras & Tensorflow. O'Reilly Media, Inc, September 2019
 
-NOTE : This file will be updated after the keras model has been added to the repository.
+• Xiangnan H., Lizi L., Hanwang Z., Liqiang N., Xia H., Tat-Seng C.. Neural Collaborative Filtering. [Online] Available from: https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf [Accessed July 2020]
+
+• Jesus B., Santiago A., Antonio H.. Deep Learning Architecture for Collaborative Filtering Recommender Systems. [Online] Available from: https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjFxbii-9rqAhVymuYKHagXD20QFjABegQIARAB&url=https%3A%2F%2Fwww.mdpi.com%2F2076-3417%2F10%2F7%2F2441%2Fpdf&usg=AOvVaw3ftr_es5pXtZdNaMtsxXgW [Accessed July 2020]
+
+• Keras Documentation. [Online] Available from: https://keras.io [Accessed July 2020]
+
+• Tensorflow Docuementation. [Online] Available from: https://www.tensorflow.org/api_docs/python/tf [Accessed July 2020]
