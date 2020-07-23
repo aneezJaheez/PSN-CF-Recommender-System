@@ -9,7 +9,7 @@ A collaborative filtering based video game recommender system for users of the P
 * [The Dataset](#The-Dataset)
   * [Source](#Source)
   * [Key Features](#Key-Features)
-* [The Models]
+* [The Models](#The-Models)
 
 
 ## Overview
@@ -27,7 +27,7 @@ The following repository describes and evaluates various collaborative filtering
 
 ### Source
 
-The data used in this model has been scraped from a popular game review site called [Metacritic](https://www.metacritic.com). The scraping algorithm has been built using the Python Beautiful Soup library.
+The data used in this model has been scraped from a popular game review site called [Metacritic](https://www.metacritic.com). The scraping algorithm has been built using the Python Beautiful Soup library. Click [here](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/metacriticScraper.py) to check out the code.
 
 The data obtained from the website includes the users and their respective reviews for all the video games on the Playstation 4.
 
@@ -45,5 +45,12 @@ The dataset contains users, games, the ratings as 3 respective columns. Some of 
 
 ![Average Rating vs. No. of Ratings](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/avgRatingVnum.png?raw=true)
 
-Further exploration and analysis has been carried out in the "ExploratoryAnalysis.ipynb" notebook.
+Further exploration and analysis has been carried out in the [ExploratoryAnalysis.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/ExploratoryAnalysis.ipynb) notebook.
 
+## The Models
+
+The models used in this project have been derived from two packages; Python Surprise and Keras.
+
+### Surprise Models
+
+1. Singular Value Decomposition (SVD)
