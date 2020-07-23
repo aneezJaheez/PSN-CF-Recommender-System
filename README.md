@@ -52,5 +52,11 @@ Further exploration and analysis has been carried out in the [ExploratoryAnalysi
 The models used in this project have been derived from two packages; Python Surprise and Keras.
 
 ### Surprise Models
+<ol>
+ <li>[Singular Value Decomposition](https://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD) (SVD)</li>
+ <li>[Baseline Alternating Least Squares](https://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly) (ALS)</li>
+</ol>
 
-1. Singular Value Decomposition (SVD)
+1. [Singular Value Decomposition](https://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD) (SVD)
+
+A matrx factorization based model for collaborative filtering that makes recommendation based on a set of hidden features found for each user and item. The model provides limited flexibility in terms of tuning hyperparameters by enabling modifications to the Learning rate, Regularization, and Epochs. All of these hyperparameters have been tuned manually with the help of learing curves.
