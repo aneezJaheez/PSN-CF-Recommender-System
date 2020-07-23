@@ -9,6 +9,7 @@ A collaborative filtering based video game recommender system for users of the P
 * [The Dataset](#The-Dataset)
   * [Source](#Source)
   * [Key Features](#Key-Features)
+* [The Models]
 
 
 ## Overview
@@ -38,4 +39,11 @@ The dataset contains users, games, the ratings as 3 respective columns. Some of 
 2. Number of video games : 1,724
 3. Sparisity : 0.089%
 4. Shape : (171858, 3)
+5. Number of Users with over 20 ratings :  325
+6. Number of Games with over 20 ratings :  595
+7. The Average rating of games do not drastically increase with the increase in popularity.
+
+![Average Rating vs. No. of Ratings](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/avgRatingVnum.png?raw=true)
+
+Further exploration and analysis has been carried out in the "ExploratoryAnalysis.ipynb" notebook.
 
