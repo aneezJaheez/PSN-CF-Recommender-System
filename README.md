@@ -52,10 +52,6 @@ Further exploration and analysis has been carried out in the [ExploratoryAnalysi
 The models used in this project have been derived from two packages; Python Surprise and Keras.
 
 ### Surprise Models
-<ol>
- <li>[Singular Value Decomposition](https://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD) (SVD)</li>
- <li>[Baseline Alternating Least Squares](https://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly) (ALS)</li>
-</ol>
 
 1. [Singular Value Decomposition](https://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD) (SVD)
 
