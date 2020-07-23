@@ -210,7 +210,7 @@ The only logical conclusion I could arrive at in order to improve the results of
 
 ### Improving Keras Models
 
-The flexibility provided by keras in terms of model architecture open up a lot of avenues to improve the performance of the model. In addition to more active user participation in making video game ratings, here are some of the ways the models can be improved,
+The flexibility provided by Keras in terms of model architecture open up a lot of avenues to improve the performance of the model. In addition to more active user participation in making video game ratings, here are some of the ways the models can be improved,
 
 * <b>Obtaining the timestamps for each individual user rating</b>. This opens up a sequential aspect to the model which enables the use of Recurrent Neural Nets (RNN's) in making user rating predictions.
 * <b>Obtaining the review text from each user review</b>. With this data in hand, NLP can be applied to the user reviews, and this can have a lot of applications. For instance, the spam reviews can be discarded in order to improve the quality of the model.
