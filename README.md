@@ -148,7 +148,7 @@ The NeuMF model architecture used in this project and its optimization can be fo
 
 You can also check out how you can visualize the learning curves collected during the optimization processes for each model by visiting the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/tree/master/Keras_Models/Optimization_logs">Optimization_logs</a> folder.</p>
 
-The keras models built in the files linked above are described and studied in detail in the [Keras_CollabFilter_Models.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_CollabFilter_Models.ipynb) notebook. 
+The optimal keras models built in the files linked above are imported, described, and studied in detail in the [Keras_CollabFilter_Models.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_CollabFilter_Models.ipynb) notebook. 
 
 The notebook also describes the process of making predictions using the models and finding the top-n recommendations for each user in the system. This is done using the two functions shown below.
 
