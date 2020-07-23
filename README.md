@@ -146,10 +146,59 @@ The MLP model architure used in this project and its optimization can be found i
 
 The NeuMF model architecture used in this project and its optimization can be found in the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_Models/Hyperparameter_Optim/NeuMF_hyperasTune.py">NeuMF_hyperasTune.py</a> file under Keras_Models.
 
-You can also check out how you can view the learning curves collected during the optimization processes for each model by visiting the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/tree/master/Keras_Models/Optimization_logs">Optimization_logs</a> folder.</p>
+You can also check out how you can visualize the learning curves collected during the optimization processes for each model by visiting the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/tree/master/Keras_Models/Optimization_logs">Optimization_logs</a> folder.</p>
 
-The keras models built in the files linked above are described and studied in detail in the [Keras_CollabFilter_Models.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_CollabFilter_Models.ipynb) notebook. The notebook also describes the process of making predictions using the models and finding the top-n recommendations for each user in the system.
+The keras models built in the files linked above are described and studied in detail in the [Keras_CollabFilter_Models.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_CollabFilter_Models.ipynb) notebook. 
 
+The notebook also describes the process of making predictions using the models and finding the top-n recommendations for each user in the system. This is done using the two functions shown below.
+
+```python
+def build_full_set(data):
+   #Retrieving all unique users and games and placing them in a dataframe
+   user_game_pairs = pd.DataFrame(data["User_Enc"].unique())
+   user_game_pairs["Game_Enc"] = list(data["Game_Enc"].unique())
+
+   #Finding every user-game pair
+   user_game_pairs.columns = ["User_Enc", "Game_Enc"]
+   user_game_pairs = pd.DataFrame(product(user_game_pairs['User_Enc'], user_game_pairs['Game_Enc']))
+
+   #dropping all the pairs that have null values
+   user_game_pairs = user_game_pairs.dropna()
+
+   #forming the pre rated pairs that need to be removed from the user-item pairs
+   to_remove = pd.DataFrame(data[["User_Enc", "Game_Enc"]])
+   to_remove.columns = ["User_Enc", "Game_Enc"]
+
+   #Removing all the pairs that have already been rated
+   user_game_pairs = user_game_pairs[~user_game_pairs.isin(to_remove)].dropna()
+
+   return user_game_pairs
+```
+ 
+```python
+def top_n_recs(user_game_pairs, n = 5):
+    users = list(user_game_pairs["User_Enc"].unique())
+    recommendations = {}
+    
+    #Iterating through every user
+    for u in users:
+        #Locating all entries of an individual user
+        user_ratings = user_game_pairs.loc[user_game_pairs['User_Enc'] == u]
+
+        #Sorting the ratings in descending order and selecting the first 5 games from the sorted dataframe
+        user_ratings = user_ratings.sort_values("Rating", axis=0, ascending=False, kind='quicksort')
+        user_top_ratings = user_ratings[:n]
+
+        #Placing the recommendations for the user in a dictionary with user as the key
+        user_top_games = list(user_top_ratings["Game_Enc"])
+        recommendations[u] = user_top_games
+        
+    #Coverting the dictionary into a dataframe with users as the columns and cells containing recommended games.
+    recommendations = pd.DataFrame(recommendations)
+    
+    return recommendations
+```
+ 
 
 ## Scope of Improvement
 
@@ -157,11 +206,14 @@ The keras models built in the files linked above are described and studied in de
 
 As I have explained earlier, the Surprise package offers limited flexibility with the model architecture and optimization. Due to this trait, there are not many ways in which better results can be obtained using this package. 
 
-The only logical conclusion I could arrive at in order to improve the results of this model was to obtain more data or decrease the sparsity of the dataset. Collaborative filtering is after all a model that depends on active user participation. Hence, having more ratings made per user and a larger number of ratings per game would be the best approach to improve recommendations made by this model.
+The only logical conclusion I could arrive at in order to improve the results of this model was to <b>obtain more data or decrease the sparsity of the dataset</b>. Collaborative filtering is, after all, a model that depends on active user participation. Hence, having more ratings made per user and a larger number of ratings per game would be the best approach to improve recommendations made by this model.
 
 ### Improving Keras Models
 
 The flexibility provided by keras in terms of model architecture open up a lot of avenues to improve the performance of the model. In addition to more active user participation in making video game ratings, here are some of the ways the models can be improved,
 
-* Obtaining the timestamps for each individual user rating. This opens up a sequential aspect to the model which enables the use of Recurrent Neural Nets (RNN's) in making user rating predictions.
-* Obtaining the review text from each user review.
+* <b>Obtaining the timestamps for each individual user rating</b>. This opens up a sequential aspect to the model which enables the use of Recurrent Neural Nets (RNN's) in making user rating predictions.
+* <b>Obtaining the review text from each user review</b>. With this data in hand, NLP can be applied to the user reviews, and this can have a lot of applications. For instance, the spam reviews can be discarded in order to improve the quality of the model.
+
+
+The reasoning for the hypotheses I have introduced in this section are explained in further detail in the notebooks.
