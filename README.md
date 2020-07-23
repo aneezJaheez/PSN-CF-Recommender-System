@@ -124,7 +124,8 @@ Right off the bat, the Keras models provide much greater flexibility over the Su
  
  </ol>
  
- 
+<br>
+
 The above images show highly simplified outlines of the model architecture. It is already clear from it that there are several aspects of it that can be modified, such as
  
  <ul>
