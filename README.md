@@ -11,6 +11,7 @@ A collaborative filtering based video game recommender system for users of the P
   * [Key Features](#Key-Features)
 * [The Models](#The-Models)
   * [Surprise Models](#Surprise-Models)
+  * [Keras Models](#Keras-Models)
 
 
 ## Overview
@@ -22,6 +23,7 @@ The following repository describes and evaluates various collaborative filtering
 * [Beautful Soup 4.8.0](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#)
 * [Keras 2.4.3](https://keras.io)
 * [Surprise 1.1.0](https://surprise.readthedocs.io/en/stable/getting_started.html)
+* [Hyperas 0.4.1](https://github.com/maxpumperla/hyperas)
 
 
 ## The Dataset
@@ -97,3 +99,31 @@ In both the above cases, besides tuning the hyperparameters, the train-test spli
 You can check out the Surprise models, predictions, top-n recommendations, and the reasoning behind the above hypotheses in the [MatrixFactorization_CollabFilter_PSN.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/MatrixFactorization_CollabFilter_PSN.ipynb) notebook.
 
 
+### Keras Models
+
+Right off the bat, the Keras models provide much greater flexibility over the Surprise models in terms of architecture and the hyperparameters that can be tuned. The package allows you to build your own ANN architecture and fiddle with every aspect of it depending on the task at hand. Having a good understanding of the model and its hyperparameters can really help take advantage of this added flexibility. Some of the models I have built using this package are introduced below. 
+
+<ol>
+ <li>Multi-Layer Perceptron</li>
+ 
+ <p>A multi-layer perceptron is essentially an ANN architecture that contains at least one hidden layer. In this particular case, users and items are assigned with a given number of embeddings that are treated as a set of features for that user or item. A generalized outline of such a model is shown below.</p>
+ 
+ ![MLP Model](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/mlpmodel.png?raw=true)
+ 
+ <p>The above image shows a highly simplified outline of the model architecture. It is already clear from it that there are several aspects of it that can be modified, such as</p>
+ <ul>
+  <li>Number of embeddings</li>
+  <li>Number of hidden layers</li>
+  <li>Number of neurons</li>
+  <li>Layer activations</li>
+  <li>And so much more...</li>
+ </ul>
+ 
+ <p>In practice however, there are a lot more layers that fall in between what you see in the image above, and this introduces a large number of hyperparameters. You could imagine that optimizing such a large number of hyperparameters can get really time consuming. For this reason, I have used Hyperas, an optimization library, to save some time during this process and automate the tuning process to a certain extent.</p>
+ 
+ <p>The MLP model architure used in this project and its optimization can be found in the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_Models/Hyperparameter_Optim/MLP_hyperasTune.py">MLP_hyperasTune.py</a> file under Keras_Models. You can also check out how you can view the learning curves collected during the optimization process by visiting the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/tree/master/Keras_Models/Optimization_logs">Optimization_logs</a> folder.</p>
+ 
+ <p>This mode returned an MSE of 0.0762<p/>
+ 
+ <li>Neural Matrix Factorization</li>
+</ol>
