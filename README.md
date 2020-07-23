@@ -12,6 +12,7 @@ A collaborative filtering based video game recommender system for users of the P
 * [The Models](#The-Models)
   * [Surprise Models](#Surprise-Models)
   * [Keras Models](#Keras-Models)
+* [References](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Pipeline%20%26%20References.md)
 
 
 ## Overview
@@ -119,6 +120,10 @@ Right off the bat, the Keras models provide much greater flexibility over the Su
  
  ![NeuMF Model Architecure](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/neumfmodel.png?raw=true)
  
+ <p>This model returned an MSE of 0.0751</p>
+ 
+ </ol>
+ 
  
 The above images show highly simplified outlines of the model architecture. It is already clear from it that there are several aspects of it that can be modified, such as
  
@@ -139,4 +144,3 @@ The NeuMF model architecture used in this project and its optimization can be fo
 
 You can also check out how you can view the learning curves collected during the optimization processes for each model by visiting the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/tree/master/Keras_Models/Optimization_logs">Optimization_logs</a> folder.</p>
 
-</ol>
