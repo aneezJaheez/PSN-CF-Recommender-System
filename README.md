@@ -104,26 +104,39 @@ You can check out the Surprise models, predictions, top-n recommendations, and t
 Right off the bat, the Keras models provide much greater flexibility over the Surprise models in terms of architecture and the hyperparameters that can be tuned. The package allows you to build your own ANN architecture and fiddle with every aspect of it depending on the task at hand. Having a good understanding of the model and its hyperparameters can really help take advantage of this added flexibility. Some of the models I have built using this package are introduced below. 
 
 <ol>
- <li><em>Multi-Layer Perceptron</em></li>
+ <li><b>Multi-Layer Perceptron</b></li>
  
  <p>A multi-layer perceptron is essentially an ANN architecture that contains at least one hidden layer. In this particular case, users and items are assigned with a given number of embeddings that are treated as a set of features for that user or item. A generalized outline of such a model is shown below.</p>
  
  ![MLP Model](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/mlpmodel.png?raw=true)
  
- <p>The above image shows a highly simplified outline of the model architecture. It is already clear from it that there are several aspects of it that can be modified, such as</p>
+ <p>This mode returned an MSE of 0.0762<p/>
+ 
+ 
+ <li><b>Neural Matrix Factorization</b></li>
+ 
+ <p>Simply put, this model combines the MLP model and the the matrix factorization model. It attempts to combine the MLP and MF frameworks so that they can mutually reinforce each other and learn more complex patterns in the data. A basic outline of this model is shown below.</p>
+ 
+ ![NeuMF Model Architecure](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/neumfmodel.png?raw=true)
+ 
+ 
+The above images show highly simplified outlines of the model architecture. It is already clear from it that there are several aspects of it that can be modified, such as
+ 
  <ul>
   <li>Number of embeddings</li>
   <li>Number of hidden layers</li>
   <li>Number of neurons</li>
   <li>Layer activations</li>
+  <li>The optimizer</li>
   <li>And so much more...</li>
  </ul>
  
- <p>In practice however, there are a lot more layers that fall in between what you see in the image above, and this introduces a large number of hyperparameters. You could imagine that optimizing such a large number of hyperparameters can get really time consuming. For this reason, I have used Hyperas, an optimization library, to save some time during this process and automate the tuning process to a certain extent.</p>
+In practice however, there are a lot more layers that fall in between what you see in the image above, and this introduces a large number of hyperparameters. You could imagine that optimizing such a large number of hyperparameters can get really time consuming. For this reason, I have used Hyperas, an optimization library, to save some time during this process and automate the tuning process to a certain extent.
  
- <p>The MLP model architure used in this project and its optimization can be found in the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_Models/Hyperparameter_Optim/MLP_hyperasTune.py">MLP_hyperasTune.py</a> file under Keras_Models. You can also check out how you can view the learning curves collected during the optimization process by visiting the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/tree/master/Keras_Models/Optimization_logs">Optimization_logs</a> folder.</p>
- 
- <p>This mode returned an MSE of 0.0762<p/>
- 
- <li><em>Neural Matrix Factorization</em></li>
+The MLP model architure used in this project and its optimization can be found in the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_Models/Hyperparameter_Optim/MLP_hyperasTune.py">MLP_hyperasTune.py</a> file under Keras_Models.
+
+The NeuMF model architecture used in this project and its optimization can be found in the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_Models/Hyperparameter_Optim/NeuMF_hyperasTune.py">NeuMF_hyperasTune.py</a> file under Keras_Models.
+
+You can also check out how you can view the learning curves collected during the optimization processes for each model by visiting the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/tree/master/Keras_Models/Optimization_logs">Optimization_logs</a> folder.</p>
+
 </ol>
