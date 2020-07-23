@@ -69,7 +69,7 @@ The models used in this project have been derived from two packages; Python Surp
  ![Regularization vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/Lambda.png?raw=true)
  ![Epochs vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/epochs.png?raw=true)
  
- <p>This model returned an MSE of 0.070.</p>
+ <p><b>This model returned an MSE of 0.070.</b></p>
 
  
  <a href = "https://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly"><li>Baseline Alternating Least Squares (ALS)</li></a>
@@ -92,7 +92,7 @@ param_grid = {
 gs_als = GridSearchCV(BaselineOnly, param_grid, measures=['rmse'], cv=3)
 ```
 
-<p>Using the ALS model, I was able to achieve a slightly better MSE of 0.0676</p>
+<p><b>Using the ALS model, I was able to achieve a slightly better MSE of 0.0676.</b></p>
 
 </ol>
 
@@ -114,7 +114,7 @@ Right off the bat, the Keras models provide much greater flexibility over the Su
  
  ![MLP Model](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/mlpmodel.png?raw=true)
  
- <p>This mode returned an MSE of 0.0762. One way to improve this model is to combine it with a matrix factorization model. This is exactly what the second keras Model defined in this project deals with.<p/>
+ <p><b>This model returned an MSE of 0.0762.</b> One way to improve this model is to combine it with a matrix factorization model. This is exactly what the second keras Model defined in this project deals with.<p/>
  
  
  <li><b>Neural Matrix Factorization</b></li>
@@ -123,7 +123,7 @@ Right off the bat, the Keras models provide much greater flexibility over the Su
  
  ![NeuMF Model Architecure](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/neumfmodel.png?raw=true)
  
- <p>This model returned an MSE of 0.0751.</p>
+ <p><b>This model returned an MSE of 0.0751.</b></p>
  
  </ol>
  
