@@ -58,6 +58,8 @@ The models used in this project have been derived from two packages; Python Surp
  <p>A matrx factorization based model for collaborative filtering that makes recommendation based on a set of hidden features found for each user and item. The model provides limited flexibility in terms of tuning hyperparameters by enabling modifications to the Learning rate, Regularization, and Epochs. All of these hyperparameters have been tuned manually with the help of learing curves.</p>
  
  ![Learning Rate vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/Alpha.png?raw=true)
+ ![Regularization vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/Lambda.png?raw=true)
+ ![Epochs vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/epochs.png?raw=true)
 
  
  <a href = "https://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly"><li>Baseline Alternating Least Squares (ALS)</li></a>
