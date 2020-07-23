@@ -104,7 +104,7 @@ You can check out the Surprise models, predictions, top-n recommendations, and t
 Right off the bat, the Keras models provide much greater flexibility over the Surprise models in terms of architecture and the hyperparameters that can be tuned. The package allows you to build your own ANN architecture and fiddle with every aspect of it depending on the task at hand. Having a good understanding of the model and its hyperparameters can really help take advantage of this added flexibility. Some of the models I have built using this package are introduced below. 
 
 <ol>
- <li>Multi-Layer Perceptron</li>
+ <li><em>Multi-Layer Perceptron</em></li>
  
  <p>A multi-layer perceptron is essentially an ANN architecture that contains at least one hidden layer. In this particular case, users and items are assigned with a given number of embeddings that are treated as a set of features for that user or item. A generalized outline of such a model is shown below.</p>
  
@@ -125,5 +125,5 @@ Right off the bat, the Keras models provide much greater flexibility over the Su
  
  <p>This mode returned an MSE of 0.0762<p/>
  
- <li>Neural Matrix Factorization</li>
+ <li><em>Neural Matrix Factorization</em></li>
 </ol>
