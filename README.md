@@ -10,6 +10,7 @@ A collaborative filtering based video game recommender system for users of the P
   * [Source](#Source)
   * [Key Features](#Key-Features)
 * [The Models](#The-Models)
+ * [Surprise Models](#Surprise-Models)
 
 
 ## Overview
@@ -61,6 +62,8 @@ The models used in this project have been derived from two packages; Python Surp
  ![Learning Rate vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/Alpha.png?raw=true)
  ![Regularization vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/Lambda.png?raw=true)
  ![Epochs vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/epochs.png?raw=true)
+ 
+ <p>This model returned an MSE of 0.070.</p>
 
  
  <a href = "https://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly"><li>Baseline Alternating Least Squares (ALS)</li></a>
@@ -82,5 +85,13 @@ param_grid = {
 #Finding the optimal combination of parameters
 gs_als = GridSearchCV(BaselineOnly, param_grid, measures=['rmse'], cv=3)
 ```
- 
+
+<p>Using the ALS model, I was able to achieve a slightly better MSE of 0.0676</p>
+
+<p>Besides tuning the hyperparameters, the train-test split method also played a major role in making more accurate predictions by eradicating the cold-start probelm. Another avenue I discovered to improve the results was to reduce the sparsity of the dataset itself. This is portrayed below.</p>
+
+![RMSE vs. Train size](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/trainsize.png?raw=true)
+
+You can check out the model, predictions, top-n recommendations, and the reasoning behind the above hypotheses in the [MatrixFactorization_CollabFilter_PSN.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/MatrixFactorization_CollabFilter_PSN.ipynb) notebook.
+
 </ol>
