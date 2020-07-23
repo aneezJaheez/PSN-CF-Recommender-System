@@ -12,6 +12,9 @@ A collaborative filtering based video game recommender system for users of the P
 * [The Models](#The-Models)
   * [Surprise Models](#Surprise-Models)
   * [Keras Models](#Keras-Models)
+* [Scope of Improvement](#Scope-of-Improvement)
+  * [Improving Surprise Models](#Improving-Surprise-Models)
+  * [Improving Keras Models](#Improving-Keras-Models)
 * [References](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Pipeline%20%26%20References.md)
 
 
@@ -111,7 +114,7 @@ Right off the bat, the Keras models provide much greater flexibility over the Su
  
  ![MLP Model](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/mlpmodel.png?raw=true)
  
- <p>This mode returned an MSE of 0.0762<p/>
+ <p>This mode returned an MSE of 0.0762. One way to improve this model is to combine it with a matrix factorization model. This is exactly what the second keras Model defined in this project deals with.<p/>
  
  
  <li><b>Neural Matrix Factorization</b></li>
@@ -120,7 +123,7 @@ Right off the bat, the Keras models provide much greater flexibility over the Su
  
  ![NeuMF Model Architecure](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/neumfmodel.png?raw=true)
  
- <p>This model returned an MSE of 0.0751</p>
+ <p>This model returned an MSE of 0.0751.</p>
  
  </ol>
  
@@ -146,3 +149,19 @@ The NeuMF model architecture used in this project and its optimization can be fo
 You can also check out how you can view the learning curves collected during the optimization processes for each model by visiting the <a href = "https://github.com/aneezJaheez/PSN-CF-Recommender-System/tree/master/Keras_Models/Optimization_logs">Optimization_logs</a> folder.</p>
 
 The keras models built in the files linked above are described and studied in detail in the [Keras_CollabFilter_Models.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Keras_CollabFilter_Models.ipynb) notebook. The notebook also describes the process of making predictions using the models and finding the top-n recommendations for each user in the system.
+
+
+## Scope of Improvement
+
+### Improving Surprise Models
+
+As I have explained earlier, the Surprise package offers limited flexibility with the model architecture and optimization. Due to this trait, there are not many ways in which better results can be obtained using this package. 
+
+The only logical conclusion I could arrive at in order to improve the results of this model was to obtain more data or decrease the sparsity of the dataset. Collaborative filtering is after all a model that depends on active user participation. Hence, having more ratings made per user and a larger number of ratings per game would be the best approach to improve recommendations made by this model.
+
+### Improving Keras Models
+
+The flexibility provided by keras in terms of model architecture open up a lot of avenues to improve the performance of the model. In addition to more active user participation in making video game ratings, here are some of the ways the models can be improved,
+
+* Obtaining the timestamps for each individual user rating. This opens up a sequential aspect to the model which enables the use of Recurrent Neural Nets (RNN's) in making user rating predictions.
+* Obtaining the review text from each user review.
