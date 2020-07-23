@@ -55,6 +55,7 @@ The models used in this project have been derived from two packages; Python Surp
 
 <ol>
  <a href = "https://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD"><li>Singular Value Decomposition (SVD)</li></a>
+ 
  <p>A matrx factorization based model for collaborative filtering that makes recommendation based on a set of hidden features found for each user and item. The model provides limited flexibility in terms of tuning hyperparameters by enabling modifications to the Learning rate, Regularization, and Epochs. All of these hyperparameters have been tuned manually with the help of learing curves.</p>
  
  ![Learning Rate vs. RMSE](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/Alpha.png?raw=true)
@@ -63,4 +64,23 @@ The models used in this project have been derived from two packages; Python Surp
 
  
  <a href = "https://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly"><li>Baseline Alternating Least Squares (ALS)</li></a>
+ 
+ <p>While SVD uses Stochastic Gradient Descent(SGD) to converge to optimal results, the baseline algorithm uses Alternating Least Squares. ALS usually converges to better results than SGD when dealing with sparse datasets. However, the improvement in this case was not significant. It is less flexible to tuning hyperparameters than SVD as it only allows modifications to the regularization and epochs. The best combination of hyperparameters in this case has been found using the GridSearchCV function in the surprise package.</p>
+ 
+ ```python
+from surprise.model_selection import GridSearchCV
+#Setting up the range of hyperparameters
+param_grid = {
+    'bsl_options' : {
+        'method' : ['als'],
+        'reg_u' : [0.03, 0.09, 0.1, 0.3, 0.9, 1, 3, 9],
+        'reg_i' : [0.03, 0.09, 0.1, 0.3, 0.9, 1, 3, 9],
+        'n_epochs' : [15, 20, 25]
+    }
+}
+
+#Finding the optimal combination of parameters
+gs_als = GridSearchCV(BaselineOnly, param_grid, measures=['rmse'], cv=3)
+```
+ 
 </ol>
