@@ -7,6 +7,8 @@ A collaborative filtering based video game recommender system for users of the P
 * [Overview](#Overview)
 * [Packages](#Packages)
 * [The Dataset](#The-Dataset)
+  * [Source](#Source)
+  * [Key Features](#Key-Features)
 
 
 ## Overview
@@ -22,7 +24,18 @@ The following repository describes and evaluates various collaborative filtering
 
 ## The Dataset
 
-The data used in this model has been scraped from a popular game review site called [Metacritic][https://www.metacritic.com]. The scraping algorithm has been built using the Python Beautiful Soup library.
+### Source
+
+The data used in this model has been scraped from a popular game review site called [Metacritic](https://www.metacritic.com). The scraping algorithm has been built using the Python Beautiful Soup library.
 
 The data obtained from the website includes the users and their respective reviews for all the video games on the Playstation 4.
+
+
+### Key Features
+
+The dataset contains users, games, the ratings as 3 respective columns. Some of the key features of the dataset are highlighted below.
+1. Number of users : 113,339
+2. Number of video games : 1,724
+3. Sparisity : 0.089%
+4. Shape : (171858, 3)
 
