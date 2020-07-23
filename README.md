@@ -10,7 +10,7 @@ A collaborative filtering based video game recommender system for users of the P
   * [Source](#Source)
   * [Key Features](#Key-Features)
 * [The Models](#The-Models)
- * [Surprise Models](#Surprise-Models)
+  * [Surprise Models](#Surprise-Models)
 
 
 ## Overview
@@ -88,10 +88,12 @@ gs_als = GridSearchCV(BaselineOnly, param_grid, measures=['rmse'], cv=3)
 
 <p>Using the ALS model, I was able to achieve a slightly better MSE of 0.0676</p>
 
-<p>Besides tuning the hyperparameters, the train-test split method also played a major role in making more accurate predictions by eradicating the cold-start probelm. Another avenue I discovered to improve the results was to reduce the sparsity of the dataset itself. This is portrayed below.</p>
+</ol>
+
+In both the above cases, besides tuning the hyperparameters, the train-test split method also played a major role in making more accurate predictions by eradicating the cold-start probelm. Another avenue I discovered to improve the results was to reduce the sparsity of the dataset itself. This is portrayed below.
 
 ![RMSE vs. Train size](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/Img/trainsize.png?raw=true)
 
-You can check out the model, predictions, top-n recommendations, and the reasoning behind the above hypotheses in the [MatrixFactorization_CollabFilter_PSN.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/MatrixFactorization_CollabFilter_PSN.ipynb) notebook.
+You can check out the Surprise models, predictions, top-n recommendations, and the reasoning behind the above hypotheses in the [MatrixFactorization_CollabFilter_PSN.ipynb](https://github.com/aneezJaheez/PSN-CF-Recommender-System/blob/master/MatrixFactorization_CollabFilter_PSN.ipynb) notebook.
 
-</ol>
+
