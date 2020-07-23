@@ -216,4 +216,4 @@ The flexibility provided by Keras in terms of model architecture open up a lot o
 * <b>Obtaining the review text from each user review</b>. With this data in hand, NLP can be applied to the user reviews, and this can have a lot of applications. For instance, the spam reviews can be discarded in order to improve the quality of the model.
 
 
-The reasoning for the hypotheses I have introduced in this section are explained in further detail in the notebooks.
+<b>The reasoning for the hypotheses I have introduced in this section are explained in further detail in the notebooks.</b>
